@@ -1,6 +1,6 @@
 import uuid
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
 
 
@@ -14,10 +14,25 @@ class Customers(AbstractUser):
     date_update = models.DateTimeField(auto_now=True)
     date_joined = models.DateTimeField(auto_now_add=True)
 
+    groups = models.ManyToManyField(
+        Group,
+        related_name='custom_user_set',
+        blank=True,
+        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+        related_query_name='user',
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='custom_user_set',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_query_name='user',
+    )
+
     class Meta:
-        db_table = 'Customers'
-        verbose_name = 'Customers'
-        verbose_name_plural = 'Customers'
+        db_table = 'customers'
+        verbose_name = 'customers'
+        verbose_name_plural = 'customers'
 
     def __str__(self):
         return self.username
@@ -28,9 +43,9 @@ class Category(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        db_table = 'Categories'
-        verbose_name = 'Categories'
-        verbose_name_plural = 'Categories'
+        db_table = 'categories'
+        verbose_name = 'categories'
+        verbose_name_plural = 'categories'
 
     def __str__(self):
         return self.name
@@ -45,9 +60,9 @@ class ClothingItem(models.Model):
     image = models.ImageField(upload_to='cloth_images/', blank=True, null=True)
 
     class Meta:
-        db_table = 'ClothingItems'
-        verbose_name = 'ClothingItems'
-        verbose_name_plural = 'ClothingItems'
+        db_table = 'clothingItems'
+        verbose_name = 'clothingItems'
+        verbose_name_plural = 'clothingItems'
 
     def __str__(self):
         return self.title
@@ -66,9 +81,9 @@ class Listing(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        db_table = 'Listings'
-        verbose_name = 'Listings'
-        verbose_name_plural = 'Listings'
+        db_table = 'listings'
+        verbose_name = 'listings'
+        verbose_name_plural = 'listings'
 
     def __str__(self):
         return self.title
@@ -84,9 +99,9 @@ class RentalRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'RentalRequests'
-        verbose_name = 'RentalRequests'
-        verbose_name_plural = 'RentalRequests'
+        db_table = 'rentalrequests'
+        verbose_name = 'rentalrequests'
+        verbose_name_plural = 'rentalrequests'
 
     def __str__(self):
         return f"Request for {self.listing.title} by {self.customer.username}"
@@ -99,9 +114,9 @@ class Transaction(models.Model):
     rental_period = models.PositiveIntegerField(help_text="Rental period in days")
 
     class Meta:
-        db_table = 'Transactions'
-        verbose_name = 'Transactions'
-        verbose_name_plural = 'Transactions'
+        db_table = 'transactions'
+        verbose_name = 'transactions'
+        verbose_name_plural = 'transactions'
 
     def __str__(self):
         return f"Transaction for {self.rental_request.listing.title} on {self.transaction_date}"
@@ -115,9 +130,9 @@ class Review(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'Reviews'
-        verbose_name = 'Reviews'
-        verbose_name_plural = 'Reviews'
+        db_table = 'reviews'
+        verbose_name = 'reviews'
+        verbose_name_plural = 'reviews'
 
     def __str__(self):
         return f"Review for {self.listing.title} by {self.customer.username}"
